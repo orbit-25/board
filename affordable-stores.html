@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Affordable Stores in Enschede | Orbit UTwente</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <style>
+    img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
+  </style>
+  <style>
+  html {
+    scroll-behavior: smooth;
+  }
+</style>
+  <style>
+  .highlighted {
+    background-color: yellow;
+    transition: background-color 1s ease;
+  }
+</style>
+<style>
+  #map {
+    min-height: 400px;
+  }
+</style>
+<!-- Leaflet.js (Map Library) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+
+</head>
+<section x-data="mapApp" x-init="initMap"></section>
+<!-- Back to Top Button -->
+<div
+  x-data="{ show: false }"
+  x-init="window.addEventListener('scroll', () => show = window.scrollY > 300)"
+  x-show="show"
+  x-transition
+  class="fixed bottom-6 right-6 z-50"
+>
+  <button
+    @click="window.scrollTo({ top: 0, behavior: 'smooth' })"
+    class="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-xl text-xl transition-opacity duration-300"
+    title="Back to Top"
+  >
+    ⬆️ Up
+  </button>
+</div>
+<!-- Scroll to Bottom Button -->
+<div
+  x-data="{ show: true }"
+  x-init="window.addEventListener('scroll', () => show = window.scrollY < 300)"
+  x-show="show"
+  x-transition.opacity
+  class="fixed bottom-6 left-6 z-50"
+>
+  <button
+    @click="window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })"
+    class="bg-green-600 hover:bg-green-700 text-white p-3 rounded-full shadow-xl text-xl transition-opacity duration-300"
+    title="Scroll to Bottom"
+  >
+    ⬇️ Down
+  </button>
+</div>
+
+
+
+<body class="bg-gray-50 text-gray-800">
+  <!-- Centered Transparent Logo -->
+  <div class="fixed inset-0 flex items-center justify-center pointer-events-none z-0">
+    <img src="logo.png" alt="Orbit Logo" class="opacity-5 max-w-xs md:max-w-sm lg:max-w-md">
+  </div>
+
+  <!-- Navbar with Burger Menu -->
+  <nav class="bg-white shadow sticky top-0 z-10" x-data="{ open: false }">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-xl font-bold">Designed by Orbit</h1>
+      <!-- Desktop Links -->
+      <div class="hidden md:flex space-x-4">
+        <a href="#stores" class="text-blue-600 hover:underline">Stores</a>
+        <a href="#about" class="text-blue-600 hover:underline">About</a>
+        <a href="#contact" class="text-blue-600 hover:underline">Contact</a>
+      </div>
+      <!-- Mobile Burger -->
+      <button class="md:hidden focus:outline-none" @click="open = !open">
+        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+    <!-- Mobile Menu -->
+    <div class="md:hidden px-4 pb-4" x-show="open" x-transition>
+      <a href="#stores" class="block py-2 text-blue-600 hover:underline">Stores</a>
+      <a href="#about" class="block py-2 text-blue-600 hover:underline">About</a>
+      <a href="#contact" class="block py-2 text-blue-600 hover:underline">Contact</a>
+    </div>
+  </nav>
+  <!-- Smart Search with Suggestions -->
+<div class="bg-white py-4 px-4 shadow sticky top-[112px] z-20" x-data="smartSearch()" @click.outside="show = false">
+  <div class="max-w-4xl mx-auto relative">
+    <div class="flex gap-2">
+      <input
+        type="text"
+        x-model="query"
+        @input="updateSuggestions"
+        @keydown.enter.prevent="goToFirstMatch"
+        placeholder="Search stores, categories, items..."
+        class="w-full border border-gray-300 rounded-lg px-4 py-2"
+      />
+      <button @click="clearSearch" class="bg-gray-200 px-3 py-2 rounded hover:bg-gray-300">Clear</button>
+    </div>
+
+    <!-- Suggestion Dropdown -->
+    <ul x-show="show && suggestions.length" class="absolute left-0 right-0 bg-white border mt-1 rounded shadow max-h-60 overflow-y-auto z-50">
+      <template x-for="(result, index) in suggestions" :key="index">
+        <li>
+          <button
+            @click="scrollTo(result.el)"
+            class="w-full text-left px-4 py-2 hover:bg-blue-100"
+            x-text="result.text"
+          ></button>
+        </li>
+      </template>
+    </ul>
+  </div>
+</div>
+      <!-- Quick Category Navigation -->
+<div class="bg-white shadow py-4 px-4 sticky top-[64px] z-10">
+  <div class="max-w-7xl mx-auto flex flex-wrap gap-4 justify-center text-sm font-medium">
+    <a href="#groceries" class="text-blue-600 hover:underline">🛒 Groceries</a>
+    <a href="#home" class="text-blue-600 hover:underline">🏠 Home Supplies</a>
+    <a href="#clothing" class="text-blue-600 hover:underline">👕 Clothing</a>
+    <a href="#pharmacy" class="text-blue-600 hover:underline">🧼 Pharmacy</a>
+    <a href="#electronics" class="text-blue-600 hover:underline">💻 Electronics</a>
+    <a href="#secondhand" class="text-blue-600 hover:underline">♻️ Second-hand</a>
+    <a href="#bikes" class="text-blue-600 hover:underline">🚲 Bikes</a>
+    <a href="#barbers" class="text-blue-600 hover:underline">💇 Barbers</a>
+    <a href="#cafes" class="text-blue-600 hover:underline">☕ Study Cafés</a>
+    <a href="#prayer" class="text-blue-600 hover:underline">🕌 Prayer Places</a>
+    <a href="#restaurants" class="text-blue-600 hover:underline">🍛 Intl. Restaurants</a>
+    <a href="#parks" class="text-blue-600 hover:underline">🌳 Parks</a>
+    <a href="#libraries" class="text-blue-600 hover:underline">📚 Libraries</a>
+    <a href="#games" class="text-blue-600 hover:underline">🕹️ Gaming Zones</a>
+
+  </div>
+</div>
+  <!-- Hero Section -->
+  <header class="bg-blue-100 py-16 text-center">
+    <h2 class="text-3xl font-bold mb-4">Discover Affordable Stores in Enschede</h2>
+    <p class="text-lg">Helping international students shop smartly with local tips by Orbit Student Organisation</p>
+  </header>
+<!--   <!-- Search Functionality -->
+<div class="bg-white py-4 px-4 shadow sticky top-[112px] z-10" x-data="{ query: '' }">
+  <div class="max-w-4xl mx-auto flex gap-2">
+    <input
+      type="text"
+      x-model="query"
+      @keyup.enter="searchInPage(query)"
+      placeholder="Search for a store or item..."
+      class="w-full border border-gray-300 rounded-lg px-4 py-2"
+    />
+    <button
+      @click="searchInPage(query)"
+      class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+    >
+      Search
+    </button>
+  </div>
+</div> -->
+
+  <!-- Store Listings -->
+  <section id="stores" class="max-w-7xl mx-auto px-4 py-12 space-y-12">
+    <!-- Groceries -->
+    <div>
+      <div id="groceries">
+      <h3 class="text-2xl font-semibold mb-6">🛒 Groceries & Essentials</h3>
+      <div class="grid md:grid-cols-2 gap-8 mb-12">
+        <!-- Albert Heijn -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+          <img src= "Photo\Albert-Heijn-Van-Heekplein-2023-Centrum-Enschede-1.webp" alt="Albert Heijn" class="w-full h-56 object-cover">
+          <div class="p-6">
+            <h4 class="text-xl font-bold mb-2">Albert Heijn - Grocery</h4>
+            <p class="mb-2">Reliable, but a bit pricier. Daily groceries, fresh produce, snacks, beverages.</p>
+            <a href="https://maps.app.goo.gl/6pcgJQ8oQbPNkEnK7" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+          </div>
+        </div>
+        <!-- Jumbo -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+          <img src= "Photo\jumbo.jpeg" alt="Jumbo" class="w-full h-56 object-cover">
+          <div class="p-6">
+            <h4 class="text-xl font-bold mb-2">Jumbo - Grocery</h4>
+            <p class="mb-2">Large selection, fair pricing. All food essentials and household products.</p>
+            <a href="https://maps.app.goo.gl/NYB8Q6S7Au8jhkFb9" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+          </div>
+        </div>
+        <!-- Lidl -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+          <img src="Photo\lidl.jpg" alt="Lidl" class="w-full h-56 object-cover">
+          <div class="p-6">
+            <h4 class="text-xl font-bold mb-2">Lidl - Grocery</h4>
+            <p class="mb-2">Budget-friendly supermarket with good quality essentials.</p>
+            <a href="https://maps.app.goo.gl/RMgHtzrXi2gkFGUX6" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+          </div>
+        </div>
+        <!-- Toko Het Oosten-->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+          <img src="Photo\Toko.jpg" alt="Amazing Oriental" class="w-full h-56 object-cover">
+          <div class="p-6">
+            <h4 class="text-xl font-bold mb-2"> Toko Het Oosten - Asian Supermarket</h4>
+            <p class="mb-2">Asian food, spices, sauces, noodles, snacks and frozen goods.</p>
+            <a href="https://maps.app.goo.gl/8CRkMoJGDWsvWd3T6" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+          </div>
+        </div>
+        <!-- Togo -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+          <img src="Photo\Togo.jpg" alt="Lidl" class="w-full h-56 object-cover">
+          <div class="p-6">
+            <h4 class="text-xl font-bold mb-2"> Togo supermarkt en Levensmiddelen</h4>
+            <p class="mb-2">Budget-friendly supermarket for Vegetables, Spices, Meat and Pickels.</p>
+            <a href="https://maps.app.goo.gl/WWbreGRLcinwxbJC7" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+          </div>
+        </div>
+        <!-- Ada -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+          <img src="Photo\Ada.jpg" alt="Lidl" class="w-full h-56 object-cover">
+          <div class="p-6">
+            <h4 class="text-xl font-bold mb-2"> Ada Supermarket</h4>
+            <p class="mb-2">Budget-friendly supermarket for Spices, Meat, Vegetables, Turkish Sweets and Pickels.</p>
+            <a href="https://maps.app.goo.gl/NfL462QRBvz2RFWw9" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+          </div>
+        </div>
+        <!-- SPAR -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+          <img src="Photo\Spar.jpg" alt="Lidl" class="w-full h-56 object-cover">
+          <div class="p-6">
+            <h4 class="text-xl font-bold mb-2"> SPAR City Store</h4>
+            <p class="mb-2">SPAR City supermarket in the city centre offering groceries and ready to meat meals.</p>
+            <a href="https://maps.app.goo.gl/vMsQBAYWPRfhZfPD8" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Home & Kitchen Supplies -->
+<div>
+  <div id="home">
+  <h3 class="text-2xl font-semibold mb-6">🏠 Home & Kitchen Supplies</h3>
+  <div class="grid md:grid-cols-2 gap-8 mb-12">
+    <!-- Action -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\Action.jpg" alt="Action" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">Action - Budget Home Store</h4>
+        <p class="mb-2">Home goods, school supplies, cleaning products, and small electronics.</p>
+        <a href="https://maps.app.goo.gl/jkmDRQJWwcp89tRp7" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+    <!-- HEMA -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\Hema.jpg" alt="HEMA" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">HEMA - Everyday Goods</h4>
+        <p class="mb-2">Home decor, kitchenware, clothes, snacks, electronics.</p>
+        <a href="https://maps.app.goo.gl/4f7MTyGme1SLdoKY8" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+    <!-- IKEA -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\Hengelo.jpg" alt="IKEA" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">IKEA Hengelo - Furniture</h4>
+        <p class="mb-2">Affordable furniture, kitchenware, and decor. Reachable by train.</p>
+        <a href="https://maps.app.goo.gl/894F7pbd1C7qdSLw6" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+    <!-- Kringloop -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\Recycle_enschede.jpg" alt="Kringloop" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2"> Recycle Enchede Kringloop - Second-hand Clothing</h4>
+        <p class="mb-2">Affordable and eco-friendly used clothes, kitchen items and shoes.</p>
+        <a href="https://maps.app.goo.gl/qn1gcEpc8RahmGse6" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+      <!-- Clothing -->
+<div>
+  <div id="clothing">
+  <h3 class="text-2xl font-semibold mb-6">👕 Clothing (Budget Options)</h3>
+  <div class="grid md:grid-cols-2 gap-8">
+    <!-- Primark -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\Primark.jpg" alt="Primark" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">Primark - Budget Clothing</h4>
+        <p class="mb-2">Trendy clothes and essentials at very low prices.</p>
+        <a href="https://maps.app.goo.gl/LPnrW8EofneDFt2P6" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+    <!-- Zara -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\Zara.jpg" alt="Zara & H&M" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">Zara - Fashion</h4>
+        <p class="mb-2">Stylish clothing for all seasons.</p>
+        <a href="https://maps.app.goo.gl/86yUx6snhHRcNzNn9" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+    <!-- H&M -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\H_M.jpg" alt="Zara & H&M" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">H&M - Fashion</h4>
+        <p class="mb-2">Stylish clothing for all seasons.</p>
+        <a href="https://maps.app.goo.gl/ZBW17oMBN2yCpGwE8" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+    <!-- Kringloop -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\Kringloopwarenhuis.jpg" alt="Kringloop" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">Kringloopwarenhuis Het Goed Enschede - Second-hand Clothing</h4>
+        <p class="mb-2">Affordable and eco-friendly used clothes, kitchen items and shoes.</p>
+        <a href="https://maps.app.goo.gl/e6BMWXnWUh9fUNYn7" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+  </div>
+</div>
+    
+       <!-- Health & Beauty / Pharmacy -->
+<div>
+  <div id="pharmacy">
+  <h3 class="text-2xl font-semibold mb-6">🧼 Health & Beauty / Pharmacy</h3>
+  <div class="grid md:grid-cols-2 gap-8">
+    <!-- Kruidvat -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\Kruidvat_Store_Exterior.jpg" alt="Kruidvat" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">Kruidvat - Drugstore</h4>
+        <p class="mb-2">Personal care, cosmetics, health items, and some electronics.</p>
+        <a href="https://maps.app.goo.gl/uG4ghCRGCMt2ayfW9" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+    <!-- Etos -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\Etos.jpg" alt="Etos" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">Etos - Beauty & Pharmacy</h4>
+        <p class="mb-2">Pharmacy essentials, skincare, cosmetics, and vitamins.</p>
+        <a href="https://maps.app.goo.gl/Wi59az1om6uenjxZ6" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+    <!-- DA Drogist -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\DA.jpg" alt="DA Drogist" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">DA Drogist - Pharmacy</h4>
+        <p class="mb-2">Wide selection of over-the-counter meds, personal care, and more.</p>
+        <a href="https://maps.app.goo.gl/sHt7qHcEhnCCwmk46" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+  </div>
+</div>
+      
+      <!-- Electronics & Accessories -->
+<div>
+  <div id="electronics">
+  <h3 class="text-2xl font-semibold mb-6">💻 Electronics & Accessories</h3>
+  <div class="grid md:grid-cols-2 gap-8">
+    <!-- MediaMarkt -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\MediaMarkt.jpg" alt="MediaMarkt" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">MediaMarkt - Electronics</h4>
+        <p class="mb-2">Laptops, phones, accessories, appliances, and gadgets.</p>
+        <a href="https://maps.app.goo.gl/AfQzBGEoZaVdb5ps5" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+    <!-- Phone Stores -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\Phone.jpg" alt="Phone Stores" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">Phone House - SIM & Accessories</h4>
+        <p class="mb-2">SIM cards (Lycamobile, Lebara), cases, chargers, and prepaid plans.</p>
+        <a href="https://maps.app.goo.gl/LYLf8LZbT2zCg1kL6" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+    <!-- Odido shope enschede -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\odido.jpg" alt="Phone Stores" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">Electronics & Accessories</h4>
+        <p class="mb-2">Phones, Laptops, SIM cards.</p>
+        <a href="https://maps.app.goo.gl/R6DSe13Z5wLQAj9X8" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+    <!-- Action -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\Action.jpg" alt="Action Electronics" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">Action - Budget Electronics</h4>
+        <p class="mb-2">Affordable electronics like USB cables, power banks, headphones, etc.</p>
+        <a href="https://maps.app.goo.gl/jkmDRQJWwcp89tRp7" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <!-- Second-Hand Stores -->
+<div>
+  <div id="secondhand">
+  <h3 class="text-2xl font-semibold mb-6">♻️ Second-Hand Stores</h3>
+  <div class="grid md:grid-cols-2 gap-8">
+    <!-- Het Goed -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\Kringloopwinkel.jpg" alt="Het Goed" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">Kringloopwinkel RataPlan Enschede</h4>
+        <p class="mb-2">Furniture, clothes, books, electronics — all second-hand and affordable.</p>
+        <a href="https://maps.app.goo.gl/a8xbngrdQp4u2ytA8" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+    <!-- Kringloop Stores -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\Kringloop.jpg" alt="Kringloopwinkel" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">Kringloop Stores - Second-hand Shops</h4>
+        <p class="mb-2">Multiple locations around Enschede offering used goods at low prices.</p>
+        <a href="https://maps.app.goo.gl/rX8gUHiz389ELZn59" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+  </div>
+</div>
+    <!-- Bicycle Shops -->
+<div>
+  <div id="bikes">
+  <h3 class="text-2xl font-semibold mb-6">🚲 Bicycle Shops</h3>
+  <div class="grid md:grid-cols-2 gap-8">
+    <!-- Decathlon -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\Decathlon.jpg" alt="Decathlon" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">Decathlon - Bike & Sports</h4>
+        <p class="mb-2">Budget-friendly new bicycles, accessories, and repair kits.</p>
+        <a href="https://maps.app.goo.gl/LAFBQT8dmCMLd5mw8" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+    <!-- La Souris Enschede -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\La Souris.jpg" alt="Fix Your Bike" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">La Souris Enschede</h4>
+        <p class="mb-2">Bike repairs, second-hand bicycles, and student discounts.</p>
+        <a href="https://maps.app.goo.gl/RtdN6kSx6qSbz2Z38" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+    <!-- Facebook Marketplace -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\Bikesupply.jpg" alt="Bike Supply" class="w-full h-56 object-contain bg-gray-100">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">Bike Supply</h4>
+        <p class="mb-2">New bikes and bike repair shope.</p>
+        <a href="https://maps.app.goo.gl/yhCPxbxLnQXkH4KY8" target="_blank" class="text-blue-500 hover:underline">🗺️ View Online</a>
+      </div>
+    </div>
+  </div>
+</div>
+   
+    <!-- Haircuts & Grooming -->
+<div>
+  <div id="barbers">
+  <h3 class="text-2xl font-semibold mb-6">💇 Haircuts & Grooming</h3>
+  <div class="grid md:grid-cols-2 gap-8">
+    <!-- Ghanahouse -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\Ghanahouse.jpg" alt="Turkish Barber" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">Ghanahouse - Grooming</h4>
+        <p class="mb-2">Affordable barber with beard trims and clean fades.</p>
+        <a href="https://maps.app.goo.gl/de5TH8RfNiknMtXe9" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+    <!-- FA YI Hair Salon -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\FA.jpg" alt="Turkish Barber" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">FA YI Hair Salon - Grooming</h4>
+        <p class="mb-2">Affordable barber with beard trims and clean fades (Appointment need to be taken).</p>
+        <a href="https://maps.app.goo.gl/iLYBTcB8C8kFnhdv8" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+    <!-- AMI -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\AMI.jpg" alt="Student Hair Salon" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">AMI Kappers Enschede</h4>
+        <p class="mb-2">Salon shope near centrum (Appointment need to be taken).</p>
+        <a href="https://maps.app.goo.gl/oqMQftp1fHeBiEkg7" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+    <!-- Student Salons -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\UT.jpg" alt="Student Hair Salon" class="w-full h-48 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">Student Salons</h4>
+        <p class="mb-2">In UT near Sports centrum (Appointment need to be taken).</p>
+        <a href="https://maps.app.goo.gl/spUMpE42HJe8HvUs6" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+  </div>
+</div>
+    
+   <!-- Study Cafés & Chill Spots -->
+<div>
+  <div id="cafes">
+  <h3 class="text-2xl font-semibold mb-6">☕ Study Cafés & Chill Spots</h3>
+  <div class="grid md:grid-cols-2 gap-8">
+    <!-- Bagels & Beans -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\Bagels.jpg" alt="Bagels & Beans" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">Bagels & Beans</h4>
+        <p class="mb-2">Cozy café with great coffee and bagels. Perfect for relaxed studying.</p>
+        <a href="https://maps.app.goo.gl/LNN9Vw4KRJt96j5j7" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+    <!-- Coffee Fellows -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\Coffee_Fellows.jpg" alt="Coffee Fellows" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">Coffee Fellows</h4>
+        <p class="mb-2">Popular chain café with Wi-Fi and calm atmosphere for study or chill.</p>
+        <a href="https://maps.app.goo.gl/XZQpojMh1a686QgdA" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+    <!-- Bibliotheek Enschede -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\Bibliotheek.jpg" alt="Bibliotheek Enschede" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">Bibliotheek Enschede</h4>
+        <p class="mb-2">Free public library with quiet reading rooms, internet, and study desks.</p>
+        <a href="https://maps.app.goo.gl/EQvgjrvZiSbke2cDA" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+    <!-- Douwe Egberts cafe -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\Douwe.jpg" alt="Bibliotheek Enschede" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">Douwe Egberts Café</h4>
+        <p class="mb-2">Cafe with great coffee.</p>
+        <a href="https://maps.app.goo.gl/wBGcPMfH1r1ex9e66" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+    <!-- Van der Poel -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\Van.jpg" alt="Bibliotheek Enschede" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">Van der Poel</h4>
+        <p class="mb-2">Best icecream shope in Enschede.</p>
+        <a href="https://maps.app.goo.gl/s3uSqaV8GWeKLmMc8" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+  </div>
+</div>
+        <!-- Prayer Locations -->
+       <div>
+  <div id="prayer">
+    <h3 class="text-2xl font-semibold mb-6">🕌 Prayer & Worship Places</h3>
+    <div class="grid md:grid-cols-2 gap-8">
+      <!-- Mosque -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <img src="Photo\IVU.jpg" alt="Mosque" class="w-full h-56 object-cover">
+        <div class="p-6">
+          <h4 class="text-xl font-bold mb-2">Enschede Mosque - Ulu Camii</h4>
+          <p class="mb-2">Large Moroccon mosque near Volkspark . Jummah, Daily prayers, Space for women to pray and Community events.</p>
+          <a href="https://maps.app.goo.gl/wRMiJovkyg8nszWB8" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+        </div>
+      </div>
+      <!-- Church -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <img src="Photo\Grote.jpg" alt="Church" class="w-full h-56 object-cover">
+        <div class="p-6">
+          <h4 class="text-xl font-bold mb-2">Grote Kerk - Protestant Church</h4>
+          <p class="mb-2">Iconic downtown church. Services in Dutch. Historic and welcoming.</p>
+          <a href="https://maps.app.goo.gl/srq6B8m3eU6LRnU9A" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+          <!-- International Restaurants -->
+  <div>
+  <div id="restaurants">
+    <h3 class="text-2xl font-semibold mb-6">🍛 International Restaurants</h3>
+    <div class="grid md:grid-cols-2 gap-8">
+      <!-- Indian -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <img src="Photo\India poort.jpg" alt="Indian Restaurant" class="w-full h-56 object-cover">
+        <div class="p-6">
+          <h4 class="text-xl font-bold mb-2">India Poort</h4>
+          <p class="mb-2">Delicious North Indian cuisine with vegetarian and halal options.</p>
+          <a href="https://maps.app.goo.gl/RJhLZH5meJLEsA4e8" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+        </div>
+      </div>
+      <!-- Middle Eastern -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <img src="Photo\Damascus.jpg" alt="Middle Eastern Food" class="w-full h-56 object-cover">
+        <div class="p-6">
+          <h4 class="text-xl font-bold mb-2">Damascus Restaurant</h4>
+          <p class="mb-2">Syrian-style shawarma, falafel, hummus, and mixed grills.</p>
+          <a href="https://maps.app.goo.gl/2jNGKDM59fk6EhVQ9" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+        </div>
+      </div>
+      <!-- Middle Eastern -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <img src="Photo\Donermax.jpg" alt="Middle Eastern Food" class="w-full h-56 object-cover">
+        <div class="p-6">
+          <h4 class="text-xl font-bold mb-2">Doner Max</h4>
+          <p class="mb-2">Trkish food like falafel (vegetarian) and non- vegetarian rolls are available here (Halal).</p>
+          <a href="https://maps.app.goo.gl/Zmvy1urfy3D7tt8e8" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+        </div>
+      </div>
+      <!-- Indian_summer  -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <img src="Photo\Indian_summer.jpg" alt="Middle Eastern Food" class="w-full h-56 object-cover">
+        <div class="p-6">
+          <h4 class="text-xl font-bold mb-2">Indian Summer</h4>
+          <p class="mb-2">Asian and spicy Indian food is available here.</p>
+          <a href="https://maps.app.goo.gl/hBTJFkXbsYcVafU56" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+        </div>
+      </div>
+      <!-- Light of India -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <img src="Photo\Light.jpg" alt="Middle Eastern Food" class="w-full h-56 object-cover">
+        <div class="p-6">
+          <h4 class="text-xl font-bold mb-2">Light of India</h4>
+          <p class="mb-2">Asian food is available here.</p>
+          <a href="https://maps.app.goo.gl/hmkBEMBVQwJTLaiV6" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+        </div>
+      </div>
+      <!-- Crispy chicken -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <img src="Photo\Crispy.jpg" alt="Middle Eastern Food" class="w-full h-56 object-cover">
+        <div class="p-6">
+          <h4 class="text-xl font-bold mb-2">Crispy chicken</h4>
+          <p class="mb-2"> Turkish and Middle east food is available (Halal).</p>
+          <a href="https://maps.app.goo.gl/XVmsiPSBoGGzynrS7" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+        </div>
+      </div>
+      <!-- Happy Italy -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <img src="Photo\Italy.jpg" alt="Middle Eastern Food" class="w-full h-56 object-cover">
+        <div class="p-6">
+          <h4 class="text-xl font-bold mb-2">Happy Italy</h4>
+          <p class="mb-2">Italian food is available.</p>
+          <a href="https://maps.app.goo.gl/RaJL9SimzGHxFqZbA" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+        </div>
+      </div>
+      <!-- Domino's -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <img src="Photo\Domino.jpg" alt="Middle Eastern Food" class="w-full h-56 object-cover">
+        <div class="p-6">
+          <h4 class="text-xl font-bold mb-2">Domino's Pizza Enschede Boulevard 1945</h4>
+          <p class="mb-2">Internationally known for pizza and burger.</p>
+          <a href="https://maps.app.goo.gl/4qqy9ikTL31tAKn26" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+        </div>
+      </div>
+      <!-- KFC -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <img src="Photo\KFC.jpg" alt="Middle Eastern Food" class="w-full h-56 object-cover">
+        <div class="p-6">
+          <h4 class="text-xl font-bold mb-2">KFC</h4>
+          <p class="mb-2">Restaurant chain known for its buckets of fried chicken, plus combo meals & sides.</p>
+          <a href="https://maps.app.goo.gl/4qqy9ikTL31tAKn26" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+            <!--       Parks & Picnic Spots -->
+  <div>
+  <div id="parks">
+    <h3 class="text-2xl font-semibold mb-6">🌳 Parks & Picnic Spots</h3>
+    <div class="grid md:grid-cols-2 gap-8">
+      <!-- Volkspark -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <img src="Photo\Volkspark.jpg" alt="Volkspark" class="w-full h-56 object-cover">
+        <div class="p-6">
+          <h4 class="text-xl font-bold mb-2">Volkspark</h4>
+          <p class="mb-2">Perfect for walking, relaxing, and weekend BBQs. Central location.</p>
+          <a href="https://maps.app.goo.gl/on2odvoRJR2rrfEy9" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+        </div>
+      </div>
+      <!-- Wooldrikspark -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <img src="Photo\Wooldrik.jpg" alt="Roombeekpark" class="w-full h-56 object-cover">
+        <div class="p-6">
+          <h4 class="text-xl font-bold mb-2">Wooldrikspark</h4>
+          <p class="mb-2">Modern green space with art, streams, and chilling.</p>
+          <a href="https://maps.app.goo.gl/Ac9iXxezs8jHcwHR9" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+        </div>
+      </div>
+      <!-- Rutbeek Recreatiepark -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <img src="Photo\Rutbeek.jpg" alt="Roombeekpark" class="w-full h-56 object-cover">
+        <div class="p-6">
+          <h4 class="text-xl font-bold mb-2">Rutbeek Recreatiepark</h4>
+          <p class="mb-2">Beautiful lake with lot of space to relax and lie down. Clear water for swimming.</p>
+          <a href="https://maps.app.goo.gl/3qV1CdGEG3D6rddU7" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        <!--          Libraries -->
+  <div>
+  <div id="libraries">
+    <h3 class="text-2xl font-semibold mb-6">📚 Libraries & Study Zones</h3>
+    <div class="grid md:grid-cols-2 gap-8">
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <img src="Photo\Bibliotheek.jpg" alt="Library" class="w-full h-56 object-cover">
+        <div class="p-6">
+          <h4 class="text-xl font-bold mb-2">Bibliotheek Enschede</h4>
+          <p class="mb-2">Free Wi-Fi, desks, and calm spaces for reading and studying.</p>
+          <a href="https://maps.app.goo.gl/EQvgjrvZiSbke2cDA" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+        </div>
+      </div>
+      <!-- Vrijhof -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <img src="Photo\Vrijhof.jpg" alt="Bibliotheek Enschede" class="w-full h-56 object-cover">
+      <div class="p-6">
+        <h4 class="text-xl font-bold mb-2">Vrijhof</h4>
+        <p class="mb-2">The UT library offers individual study spaces, but silent rooms must be booked in advance through the university website. Study desks are also available for general use.</p>
+        <a href="https://maps.app.goo.gl/aj9beEQEWahLM4f17" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+<!--     Gaming Zones -->
+<div>
+  <div id="games">
+    <h3 class="text-2xl font-semibold mb-6">🕹️ Gaming Zones & Hangouts</h3>
+    <div class="grid md:grid-cols-2 gap-8">
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <img src="Photo\Gamebox.jpg" alt="Gaming" class="w-full h-56 object-cover">
+        <div class="p-6">
+          <h4 class="text-xl font-bold mb-2">Game Box Enschede</h4>
+          <p class="mb-2">Arcade games, air hockey, racing simulators. Chill with friends or go solo.</p>
+          <a href="https://maps.app.goo.gl/q1NP4yyTWEwpkN916" target="_blank" class="text-blue-500 hover:underline">🗺️ View on Google Maps</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="max-w-7xl mx-auto px-4 py-12" x-data="mapApp" x-init="initMap()">
+  <h3 class="text-2xl font-semibold mb-4">📍 Enschede Map with Student-Friendly Locations</h3>
+
+  <!-- Category Toggle Bar -->
+  <div class="flex flex-wrap gap-4 mb-4">
+    <template x-for="(visible, category) in toggles" :key="category">
+      <label class="flex items-center gap-2">
+        <input type="checkbox" x-model="toggles[category]" @change="updateMarkers" />
+        <span x-text="category"></span>
+      </label>
+    </template>
+  </div>
+
+  <!-- Map Display -->
+  <div id="map" class="w-full h-[500px] rounded-lg shadow"></div>
+</section>
+
+
+    
+
+
+
+
+<!--   <!-- About Section -->
+<!--   <section id="about" class="bg-white py-12">
+    <div class="max-w-4xl mx-auto px-4">
+      <h3 class="text-2xl font-semibold mb-4">About Orbit</h3>
+      <p>Orbit is a student organisation at the University of Twente aiming to support international students in adapting to life in Enschede. This project is built to guide students towards affordable and accessible shopping options across the city.</p>
+    </div>
+  </section> --> -->
+
+  <!-- Contact Section -->
+  <section id="contact" class="bg-gray-100 py-12">
+    <div class="max-w-4xl mx-auto px-4">
+      <h3 class="text-2xl font-semibold mb-4">Contact Us</h3>
+      <p>Have a suggestion or want to contribute? Reach out to us at <a href="mailto:sab-itc@utwente.nl" class="text-blue-600 underline">sab-itc@utwente.nl</a></p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-white text-center py-6 border-t">
+    <p>&copy; 2025 Orbit Student Organisation - University of Twente</p>
+  </footer>
+  
+<!-- <!-- Your external JavaScript file -->
+<script src="search.js" defer></script> -->
+  
+
+</body>
+</html>
+  
+<script>
+  function smartSearch() {
+    return {
+      query: '',
+      suggestions: [],
+      show: false,
+      allElements: [],
+      init() {
+        // Collect searchable content
+        this.allElements = Array.from(document.querySelectorAll("h2, h3, h4, p")).map(el => ({
+          el: el,
+          text: el.textContent.trim()
+        }));
+      },
+      updateSuggestions() {
+        const term = this.query.toLowerCase();
+        if (!term) {
+          this.suggestions = [];
+          this.show = false;
+          return;
+        }
+
+        this.suggestions = this.allElements
+          .filter(item => item.text.toLowerCase().includes(term))
+          .slice(0, 10); // limit results
+
+        this.show = this.suggestions.length > 0;
+      },
+      scrollTo(el) {
+        this.clearHighlights();
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        el.classList.add("highlighted");
+        this.show = false;
+      },
+      clearSearch() {
+        this.query = '';
+        this.suggestions = [];
+        this.show = false;
+        this.clearHighlights();
+      },
+      goToFirstMatch() {
+        if (this.suggestions.length > 0) {
+          this.scrollTo(this.suggestions[0].el);
+        }
+      },
+      clearHighlights() {
+        document.querySelectorAll(".highlighted").forEach(el => {
+          el.classList.remove("highlighted");
+        });
+      }
+    };
+  }
+</script>
+
+<div class="flex flex-wrap gap-4 mb-4">
+  <template x-for="(visible, category) in toggles" :key="category">
+    <label class="flex items-center gap-2">
+      <input type="checkbox" x-model="toggles[category]" @change="updateMarkers" />
+      <span x-text="category"></span>
+    </label>
+  </template>
+</div>
+
+<!-- <script>
+  document.addEventListener("alpine:init", () => {
+    Alpine.data("mapApp", () => ({
+      // ...
+      initMap() {
+        setTimeout(() => {
+          this.map = L.map("map").setView([52.2215, 6.8937], 13);
+          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
+          }).addTo(this.map);
+
+          this.map.invalidateSize();
+          this.addAllMarkers();
+        }, 200); // small delay
+      },
+      // ...
+    }));
+  });
+</script> -->
+
+<script>
+  document.addEventListener("alpine:init", () => {
+    Alpine.data("mapApp", () => ({
+      map: null,
+      toggles: {
+        "🛒 Groceries": true,
+        "🏠 Home Supplies": true,
+        "👕 Clothing": true,
+        "🧼 Pharmacy": true,
+        "💻 Electronics": true,
+        "♻️ Second-hand": true,
+        "🚲 Bikes": true,
+        "💇 Barbers": true,
+        "☕ Study Cafés": true,
+        "🕌 Prayer Places": true,
+        "🍛 Intl. Restaurants": true,
+        "🌳 Parks": true,
+        "📚 Libraries": true,
+        "🕹️ Gaming Zones": true,
+      },
+      allMarkers: [],
+      allLabels: [],
+
+      initMap() {
+        setTimeout(() => {
+          this.map = L.map("map").setView([52.2215, 6.8937], 13);
+          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
+          }).addTo(this.map);
+          this.addAllMarkers();
+          this.updateMarkers();
+        }, 200);
+      },
+
+      addAllMarkers() {
+        const locations = [
+          // Groceries
+          {
+            category: "🛒 Groceries",
+            name: "Albert Heijn",
+            coords: [52.2175, 6.8958],
+            url: "https://goo.gl/maps/6pcgJQ8oQbPNkEnK7"
+          },
+          {
+            category: "🛒 Groceries",
+            name: "Jumbo",
+            coords: [52.2205, 6.8926],
+            url: "https://goo.gl/maps/NYB8Q6S7Au8jhkFb9"
+          },
+          {
+            category: "🛒 Groceries",
+            name: "Lidl",
+            coords: [52.2185, 6.8903],
+            url: "https://goo.gl/maps/RMgHtzrXi2gkFGUX6"
+          },
+          {
+            category: "🛒 Groceries",
+            name: "Amazing Oriental",
+            coords: [52.2201, 6.8964],
+            url: "https://goo.gl/maps/fUYcY5Wb3c22"
+          },
+          
+          // Home Supplies
+          {
+            category: "🏠 Home Supplies",
+            name: "Action",
+            coords: [52.2184, 6.8901],
+            url: "https://goo.gl/maps/EJY7gBEnuMRCYZaJ7"
+          },
+          {
+            category: "🏠 Home Supplies",
+            name: "HEMA",
+            coords: [52.2177, 6.8956],
+            url: "https://goo.gl/maps/fZGxiJWmYzMMrpbe6"
+          },
+          
+          // Clothing
+          {
+            category: "👕 Clothing",
+            name: "Primark",
+            coords: [52.2173, 6.8962],
+            url: "https://goo.gl/maps/3Nq7yJ96n7U8cQKw5"
+          },
+          {
+            category: "👕 Clothing",
+            name: "H&M",
+            coords: [52.2176, 6.8960],
+            url: "https://goo.gl/maps/UR9qkEDDBGVBbsut7"
+          },
+          
+          // Pharmacy
+          {
+            category: "🧼 Pharmacy",
+            name: "Kruidvat",
+            coords: [52.2174, 6.8959],
+            url: "https://goo.gl/maps/jCTSMHpHVmzABq7B7"
+          },
+          {
+            category: "🧼 Pharmacy",
+            name: "Etos",
+            coords: [52.2204, 6.8927],
+            url: "https://goo.gl/maps/B9a7rs3KEkfttYh86"
+          },
+          
+          // Electronics
+          {
+            category: "💻 Electronics",
+            name: "MediaMarkt",
+            coords: [52.2342, 6.8638],
+            url: "https://goo.gl/maps/zGhP7n6EFM1pU2Fw6"
+          },
+          
+          // Second-hand
+          {
+            category: "♻️ Second-hand",
+            name: "Het Goed",
+            coords: [52.2183, 6.8968],
+            url: "https://goo.gl/maps/3pTPk4yHhTKwDGUW9"
+          },
+          
+          // Bikes
+          {
+            category: "🚲 Bikes",
+            name: "FBF - Fix Your Bike",
+            coords: [52.2434, 6.8379],
+            url: "https://goo.gl/maps/XEXkArXSw5SC3eLC9"
+          },
+          
+          // Barbers
+          {
+            category: "💇 Barbers",
+            name: "Turkish Barber",
+            coords: [52.2198, 6.8945],
+            url: "https://goo.gl/maps/pgF3quDsoEeKcZ4a8"
+          },
+          
+          // Study Cafés
+          {
+            category: "☕ Study Cafés",
+            name: "Bagels & Beans",
+            coords: [52.2202, 6.8958],
+            url: "https://goo.gl/maps/EkXSwLxBhZKowBuw5"
+          },
+          {
+            category: "☕ Study Cafés",
+            name: "Coffee Fellows",
+            coords: [52.2203, 6.8961],
+            url: "https://goo.gl/maps/7Ld3AUqzZDZzcvth9"
+          },
+          
+          // Prayer Places
+          {
+            category: "🕌 Prayer Places",
+            name: "Ulu Camii Mosque",
+            coords: [52.2225, 6.8899],
+            url: "https://goo.gl/maps/YkyPWBGeKx3Y1Mr78"
+          },
+          
+          // International Restaurants
+          {
+            category: "🍛 Intl. Restaurants",
+            name: "India Poort",
+            coords: [52.2206, 6.8910],
+            url: "https://goo.gl/maps/wK4z5Mk8ZGyLZgfh9"
+          },
+          {
+            category: "🍛 Intl. Restaurants",
+            name: "Damascus Restaurant",
+            coords: [52.2208, 6.8943],
+            url: "https://goo.gl/maps/RrYDj6qgGH8DeTQr9"
+          },
+          
+          // Parks
+          {
+            category: "🌳 Parks",
+            name: "Volkspark",
+            coords: [52.2148, 6.8734],
+            url: "https://goo.gl/maps/H84deEKFqNqkdc5q6"
+          },
+          {
+            category: "🌳 Parks",
+            name: "Roombeekpark",
+            coords: [52.2286, 6.8994],
+            url: "https://goo.gl/maps/kMpxjUzW2ZhyYhZs8"
+          },
+          
+          // Libraries
+          {
+            category: "📚 Libraries",
+            name: "Bibliotheek Enschede",
+            coords: [52.2201, 6.8965],
+            url: "https://goo.gl/maps/ehokESAiMALzTZc37"
+          },
+          
+          // Gaming Zones
+          {
+            category: "🕹️ Gaming Zones",
+            name: "Gamestate",
+            coords: [52.2190, 6.8952],
+            url: "https://goo.gl/maps/nHaU59pq9rNJ6txo8"
+          }
+        ];
+
+        for (const loc of locations) {
+          // Create marker with custom icon
+          const marker = L.marker(loc.coords, {
+            icon: L.divIcon({
+              className: 'custom-marker',
+              html: `<div class="marker-container">
+                      <div class="marker-pin"></div>
+                      <div class="marker-label">${loc.name}</div>
+                    </div>`,
+              iconSize: [30, 42],
+              iconAnchor: [15, 42],
+              popupAnchor: [0, -36]
+            })
+          })
+          .bindPopup(`<strong>${loc.name}</strong><br><a href="${loc.url}" target="_blank">📍 View on Map</a>`);
+          
+          marker.category = loc.category;
+          this.allMarkers.push(marker);
+        }
+      },
+
+      updateMarkers() {
+        this.allMarkers.forEach(marker => {
+          if (this.toggles[marker.category]) {
+            marker.addTo(this.map);
+          } else {
+            this.map.removeLayer(marker);
+          }
+        });
+      }
+    }));
+  });
+</script>
+
+<style>
+  .custom-marker {
+    background: transparent;
+    border: none;
+  }
+  
+  .marker-container {
+    position: relative;
+    text-align: center;
+  }
+  
+  .marker-pin {
+    width: 30px;
+    height: 30px;
+    border-radius: 50% 50% 50% 0;
+    background: #3a84df;
+    position: absolute;
+    transform: rotate(-45deg);
+    left: 50%;
+    top: 0;
+    margin: -15px 0 0 -15px;
+  }
+  
+  .marker-label {
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    background: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+    font-size: 12px;
+    font-weight: bold;
+    margin-top: 5px;
+  }
+  
+  /* Adjust for better visibility */
+  .leaflet-marker-icon .marker-label {
+    z-index: 1000;
+  }
+</style>

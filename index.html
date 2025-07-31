@@ -1,0 +1,318 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orbit Student Association | ITC</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-800" x-data="{ menuOpen: false }">
+
+  <!-- Navbar with burger icon -->
+  <header class="bg-white shadow sticky top-0 z-20">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold">Orbit ITC</h1>
+      <button @click="menuOpen = !menuOpen" class="md:hidden">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+      <nav class="hidden md:flex gap-6">
+        <div class="relative group">
+          <button class="font-semibold">Orbit Info</button>
+          <div class="absolute hidden group-hover:block bg-white shadow p-4 rounded mt-2 space-y-2 z-30">
+            <a href="#intro" class="block hover:text-blue-600">Intro</a>
+            <a href="#events" class="block hover:text-blue-600">Events</a>
+            <a href="#calendar" class="block hover:text-blue-600">Calendar</a>
+            <a href="#facilities" class="block hover:text-blue-600">Facilities</a>
+            <a href="#membership" class="block hover:text-blue-600">Membership</a>
+            <a href="#board" class="block hover:text-blue-600">Board Members</a>
+            <a href="#contact" class="block hover:text-blue-600">Contact</a>
+          </div>
+        </div>
+        <div class="relative group">
+    <a href="affordable-stores.html" target="_blank" class="font-semibold hover:text-blue-600">
+      Affordable Stores
+    </a>
+    
+        </div>
+      </nav>
+    </div>
+    <div x-show="menuOpen" class="md:hidden bg-white shadow px-6 py-4 space-y-2">
+      <a href="#intro" class="block">Intro</a>
+      <a href="#events" class="block">Events</a>
+      <a href="#calendar" class="block">Calendar</a>
+      <a href="#facilities" class="block">Facilities</a>
+      <a href="#membership" class="block">Membership</a>
+      <a href="#board" class="block">Board Members</a>
+      <a href="#contact" class="block">Contact</a>
+      <hr>
+      <a href="affordable-stores.html" class="block" target="_blank">Affordable Stores</a>
+    </div>
+  </header>
+
+  <section class="bg-blue-100 text-center py-20">
+    <h1 class="text-4xl md:text-5xl font-extrabold">Welcome to Orbit Student Association in ITC</h1>
+  </section>
+
+<section id="intro" class="py-16 bg-white">
+  <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-8 items-center">
+    <div>
+      <h2 class="text-3xl font-bold mb-4">Who We Are</h2>
+      <p class="text-lg text-gray-700 text-justify mb-6">
+        At ITC, University of Twente, where students from across the globe come together to pursue advanced studies in geo-information science and earth observation, adapting to a new academic and cultural environment can be both exciting and challenging. That’s where Orbit steps in not just as a student board, but as a bridge between individuals, cultures, and experiences. Founded with the belief that a sense of belonging is essential for academic and personal growth, Orbit is a student-led association committed to creating a supportive and inclusive space for all ITC students. We understand that true success goes beyond grades; it’s also about friendships formed, traditions shared, and memories created along the way. That’s why we organize everything from academic workshops and career talks to cultural festivals and social events each designed to connect, uplift, and empower. Orbit is more than a committee; it’s a community built by students, for students a place where every voice matters, and every journey is celebrated.
+      </p>
+    </div>
+    <div class="flex justify-center">
+      <img src="logo.png" alt="Orbit intro image" class="w-100 h-100 rounded-full object-cover shadow-lg">
+    </div>
+  </div>
+</section>
+
+
+<section id="events" class="py-16 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-10">Orbit Events</h2>
+
+    <div class="grid md:grid-cols-2 gap-10">
+      <!-- Event 1 -->
+      <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <img src="Celebrating_love_and_friendship.jpg" alt="Valentine event" class="w-full h-70 object-cover">
+        <div class="p-6">
+          <h3 class="text-xl font-semibold mb-2">Celebrating Love and Friendship</h3>
+          <p class="text-gray-700 text-justify">For our Valentine’s Day celebration, we embraced the spirit of love and friendship. From anonymous love notes to dinners with friends, and a festive party to top it all off. The love could be felt throughout the entire ITC faculty.</p>
+        </div>
+      </div>
+
+      <!-- Event 2 -->
+      <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <img src="Spring_in_keukenhof.jpg" alt="Keukenhof Spring Trip" class="w-full h-70 object-cover">
+        <div class="p-6">
+          <h3 class="text-xl font-semibold mb-2">Spring in Keukenhof</h3>
+          <p class="text-gray-700 text-justify">To welcome the beauty of the season, we spent a blooming day at Keukenhof, surrounded by tulips, sunshine, and laughter. From peaceful strolls through flower-lined paths to joyful group photos, it was a perfect escape into nature.</p>
+        </div>
+      </div>
+
+      <!-- Event 3 -->
+<div class="bg-white shadow-md rounded-lg overflow-hidden">
+  <img src="Food_festival.jpg" alt="Food Festival" class="w-full h-70 object-cover">
+  <div class="p-6">
+    <h3 class="text-xl font-semibold mb-2">International Food Festival</h3>
+    <p class="text-gray-700 text-justify">We traveled the world through the flavors of our community during the International Food Day, with delicious homemade dishes from eight different countries. It was a celebration of culture, connection, and the joy of sharing a meal together.</p>
+  </div>
+</div>
+      <!-- Event 4 -->
+<div class="bg-white shadow-md rounded-lg overflow-hidden">
+  <img src="Sports_day.jpg" alt="Sports Day" class="w-full h-70 object-cover">
+  <div class="p-6">
+    <h3 class="text-xl font-semibold mb-2">International Sports Day</h3>
+    <p class="text-gray-700 text-justify">Students and ITC staff came together for an active and cheerful afternoon, enjoying soccer, volleyball, and other games. It was a great chance to build team spirit, relax, and have fun outside the academic routine.</p>
+  </div>
+</div>
+
+<!-- Event 5 -->
+<div class="bg-white shadow-md rounded-lg overflow-hidden">
+  <img src="Picnic.jpg" alt="Picnic" class="w-full h-70 object-cover">
+  <div class="p-6">
+    <h3 class="text-xl font-semibold mb-2">Picnic at Wooldrikspark</h3>
+    <p class="text-gray-700 text-justify">We gathered for a relaxing afternoon in the park, enjoying nature, games, and even meeting some furry friends. It was a joyful break and a beautiful way to connect with others in a calm environment.</p>
+  </div>
+</div>
+
+<!-- Event 6 -->
+<div class="bg-white shadow-md rounded-lg overflow-hidden">
+  <img src="Teachers_day.jpg" alt="Teacher Award" class="w-full h-70 object-cover">
+  <div class="p-6">
+    <h3 class="text-xl font-semibold mb-2">Teacher of the Year</h3>
+    <p class="text-gray-700 text-justify">Congratulations to Lucas De Oto, our Teacher of the Year 2025! Orbit celebrates the educators who make a difference every day with passion and dedication.</p>
+  </div>
+</div>
+
+<!-- Event 7 -->
+<div class="bg-white shadow-md rounded-lg overflow-hidden">
+  <img src="Graduation.jpg" alt="Graduation" class="w-full h-70 object-cover">
+  <div class="p-6">
+    <h3 class="text-xl font-semibold mb-2">Graduation 2025</h3>
+    <p class="text-gray-700 text-justify">A proud moment as we honored the graduating class of 2025. With smiles, speeches, and caps in the air, the ceremony marked a new beginning for our incredible ITC students.</p>
+  </div>
+</div>
+
+      
+    </div>
+  </div>
+</section>
+
+
+  <section id="calendar" class="py-16 bg-white text-center">
+    <h2 class="text-3xl font-bold mb-4">Orbit Calendar 2025</h2>
+    <p class="text-gray-600">[Calendar image or embed goes here]</p>
+  </section>
+
+
+
+<section id="membership" class="py-16 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-10">Membership Options</h2>
+
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+      <img src="Orbit membership.png" alt="Orbit Membership" class="w-full h-70 object-cover">
+      <div class="p-6">
+        <h3 class="text-xl font-semibold mb-4">Orbit Organisation Membership</h3>
+        <p class="text-gray-700 text-justify mb-4">
+          Becoming a member of Orbit opens the door to a vibrant, enriching student life at ITC. As a member, your voice is represented on important matters related to education and accommodation, ensuring your concerns are heard and addressed. But it’s not just about advocacy it’s also about experience. Members enjoy exclusive perks like:
+        </p>
+        <ul class="list-disc list-inside text-gray-700 text-left space-y-2 pl-4">
+          <li> Free access for the move-in marke</li>
+          <li>Annual trip to Amsterdam</li>
+          <li>Free access to end of module parties with subsidized drinks at ITC lounge</li>
+          <li>Free indoor games: table tennis, chess, and pool (non-members €4/hour)</li>
+          <li>Free access to ITC hotel facilities such as a projector and sports equipment</li>
+          <li>Free movies and matches organized in the lounge</li>
+          <li>Free entrance to indoor ice skating and other fun activities</li>
+          <li>Sponsorship for ITC International Food Festival</li>
+          <li>Participation in the annual international sports competition and Batavierenrace</li>
+          <li>Annual trip to the breathtaking Keukenhof flower garden</li>
+          <li>Special rental/sale prices for bikes at the Fietsenslijterij shop</li>
+        </ul>
+        <p class="mt-6 text-blue-900 hover:underline text-sm">
+          <a href="https://universiteittwente.sharepoint.com/sites/StudentAssociationBoard/Gedeelde%20documenten/Forms/AllItems.aspx?id=%2Fsites%2FStudentAssociationBoard%2FGedeelde%20documenten%2FGeneral%2F2024%20Archive%2FOrbit%2Dmembership%2Dform%2DSEP2024%2Epdf&parent=%2Fsites%2FStudentAssociationBoard%2FGedeelde%20documenten%2FGeneral%2F2024%20Archive&p=true&ga=1.html"  target="_blank">Click here for the Membership form</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Event 7 -->
+<section id="membership" class="py-16 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-10"> </h2>
+
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+  <img src="Facilities.png" alt="Facilities" class="w-full h-70 object-cover">
+  <div class="p-6">
+    <h3 class="text-xl font-semibold mb-2">Orbit Facilities Membership</h3>
+    <p class="text-gray-700 text-justify">  By becoming a member, you’ll enjoy exclusive free access to </p>
+    <ul class="list-disc list-inside text-gray-700 text-left space-y-2 pl-4">
+  <li>Free access for the move-in market</li>
+  <li>Free access to end-of-module parties with subsidized drinks at the ITC lounge</li>
+  <li>Free indoor games: table tennis, chess, and pool (non-members €4/hour)</li>
+  <li>Free access to ITC hotel facilities such as a projector and sports equipment</li>
+  <li>Free movie and match screenings in the lounge</li>
+  <li>Free entrance to indoor ice skating and other fun activities</li>
+</ul>
+    <p class="mt-6 text-blue-900 hover:underline text-sm">
+          <a href="1.html"  target="_blank">Click here for the Membership form</a>
+        </p>
+  </div>
+</div>
+
+  </section>
+
+<section id="board" class="py-16 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-10">Meet the Board</h2>
+
+    <div class="grid md:grid-cols-2 gap-10">
+      <!-- Avinash -->
+      <div class="flex items-start gap-6">
+        <img src="avinash.jpg" alt="Avinash Reddy" class="w-32 h-32 rounded-full object-cover shadow-md">
+        <div>
+          <h3 class="text-xl font-semibold">Avinash Reddy<br><span class="text-sm font-normal">Sports Secretary</span></h3>
+          <p class="text-gray-700 text-sm mt-2 text-justify">
+            I'm Avinash Reddy, specializing in Natural Resources Management. My role is to conduct sports events for fun and competition. Feel free to approach me with event ideas or if you’d like to participate!
+          </p>
+        </div>
+      </div>
+
+      <!-- Abdulqudus -->
+      <div class="flex items-start gap-6">
+        <img src="abdulqudus.jpg" alt="Abdulqudus" class="w-32 h-32 rounded-full object-cover shadow-md">
+        <div>
+          <h3 class="text-xl font-semibold">Abdulqudus<br><span class="text-sm font-normal">Residence Coordinator</span></h3>
+          <p class="text-gray-700 text-sm mt-2 text-justify">
+            I specialize in Land Administration and serve as Residence Coordinator. I support housing, well-being, and student needs. Reach out if you have concerns or want to build a better living space.
+          </p>
+        </div>
+      </div>
+
+      <!-- Danush -->
+      <div class="flex items-start gap-6">
+        <img src="danush.jpg" alt="Danush Raghu" class="w-32 h-32 rounded-full object-cover shadow-md">
+        <div>
+          <h3 class="text-xl font-semibold">Danush Raghu<br><span class="text-sm font-normal">Social Event Coordinator</span></h3>
+          <p class="text-gray-700 text-sm mt-2 text-justify">
+            Hey there! I’m Danush Raghu. I plan fun, inclusive events to help us all connect whether it’s academic hangouts, cultural nights, or casual meetups. Got ideas for events? Want to collaborate? Curious about geo-stuff? I’m your guy! Come say hi or drop me a message I’m always up for a good chat.
+          </p>
+        </div>
+      </div>
+        <!-- Jaheer -->
+      <div class="flex items-start gap-6">
+        <img src="Jaheer.jpg" alt="Jaheeruddeen Mogal" class="w-32 h-32 rounded-full object-cover shadow-md">
+        <div>
+          <h3 class="text-xl font-semibold">Jaheer Mogal<br><span class="text-sm font-normal">Treasurer</span></h3>
+          <p class="text-gray-700 text-sm mt-2 text-justify">
+            Hey! I’m Jaheeruddeen Mogal, a Geoinformatics Master’s student at ITC and the treasurer of Orbit. I handle the finances for all our events making sure everything runs smoothly behind the scenes. From budgeting cultural nights to managing funds for fun meetups, I’ve got it covered.
+          </p>
+        </div>
+      </div>
+
+      <!-- Sara -->
+      <div class="flex items-start gap-6">
+        <img src="sara.jpg" alt="Sara Melgarejo" class="w-32 h-32 rounded-full object-cover shadow-md">
+        <div>
+          <h3 class="text-xl font-semibold">Sara Melgarejo<br><span class="text-sm font-normal">Academic Affairs Coordinator</span></h3>
+          <p class="text-gray-700 text-sm mt-2 text-justify">
+           Hey! I’m Sara from Colombia. I'm here to help make your academic journey smoother and ensure your voice is heard. Whether you're tackling coursework or adjusting to life in a new country, you’re not alone. Let’s keep things supportive, fun, and a little less overwhelming together! 
+          </p>
+        </div>
+      </div>
+
+      <!-- Saurabh -->
+      <div class="flex items-start gap-6">
+        <img src="saurabh.jpg" alt="Saurabh Bhagchandani" class="w-32 h-32 rounded-full object-cover shadow-md">
+        <div>
+          <h3 class="text-xl font-semibold">Saurabh Bhagchandani<br><span class="text-sm font-normal">Asst. Secretary & Media/Comms</span></h3>
+          <p class="text-gray-700 text-sm mt-2 text-justify">
+            I'm Saurabh, focused on Urban Planning and Management. I help with communication and student engagement at Orbit. Let’s build a vibrant community together!
+          </p>
+        </div>
+      </div>
+
+      <!-- smith -->
+      <div class="flex items-start gap-6">
+        <img src="Smith.jpg" alt="Smith" class="w-32 h-32 rounded-full object-cover shadow-md">
+        <div>
+          <h3 class="text-xl font-semibold">Smith<br><span class="text-sm font-normal">President</span></h3>
+          <p class="text-gray-700 text-sm mt-2 text-justify">
+           Hey everyone! I’m Smit, currently doing my MSc in Geo-Information Science and Earth Observation, specialising in Natural Resources Management. I’m into ecology, decolonization, and exploring new ways to approach environmental governance, basically trying to make sense of the planet and how we treat it.  Outside of class, I’m the President of ORBIT and work on sustainability initiatives with GREENHUB (because saving the world is a team sport). At home, I am an avid chef and towards the night, a passionate cinephile!  Feel free to reach out or have chat (or if you want to reward yourself with some amazing Indian or Italian cuisine recipes or critically acclaimed cinema recommendations 😉). Looking forward to meeting you all! 🌍
+          </p>
+        </div>
+      </div>
+
+        <!-- Nawar -->
+      <div class="flex items-start gap-6">
+        <img src="Nawar.jpg" alt="Nawwar Procheta" class="w-32 h-32 rounded-full object-cover shadow-md">
+        <div>
+          <h3 class="text-xl font-semibold">Nawwar Procheta<br><span class="text-sm font-normal">Vice President</span></h3>
+          <p class="text-gray-700 text-sm mt-2 text-justify"> Hi! I’m Nawwar Fatima Procheta from Bangladesh, currently a Master’s student in Spatial Engineering at ITC. I’m passionate about climate change, disaster management, and using spatial data to solve real-world environmental challenges.I serve as the General Secretary of the current Orbit board, working to support student life and build a strong ITC community. Outside of my studies, I love cooking, baking, painting, and photography they’re my favorite ways to unwind and express myself. Always up for good food, exploring places and good conversations!
+            
+           </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <section id="contact" class="py-16 bg-white text-center">
+    <h2 class="text-3xl font-bold mb-4">Contact Us</h2>
+    <p class="text-gray-600">Reach out at: <a href="mailto:sab-itc@utwente.nl" class="text-blue-600 underline">sab-itc@utwente.nl</a></p>
+  </section>
+
+  <footer class="bg-gray-100 text-center py-6 text-sm">
+    &copy; 2025 Orbit Student Association | University of Twente
+  </footer>
+
+</body>
+</html>
