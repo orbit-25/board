@@ -990,7 +990,6 @@
         "🕹️ Gaming Zones": true,
       },
       allMarkers: [],
-      allLabels: [],
 
       initMap() {
         setTimeout(() => {
@@ -1005,189 +1004,35 @@
 
       addAllMarkers() {
         const locations = [
-          // Groceries
-          {
-            category: "🛒 Groceries",
-           
-            coords: [52.2175, 6.8958],
-            url: "https://goo.gl/maps/6pcgJQ8oQbPNkEnK7"
-          },
-          {
-            category: "🛒 Groceries",
-           
-            coords: [52.2205, 6.8926],
-            url: "https://goo.gl/maps/NYB8Q6S7Au8jhkFb9"
-          },
-          {
-            category: "🛒 Groceries",
-            
-            coords: [52.2185, 6.8903],
-            url: "https://goo.gl/maps/RMgHtzrXi2gkFGUX6"
-          },
-          {
-            category: "🛒 Groceries",
-        
-            coords: [52.2201, 6.8964],
-            url: "https://goo.gl/maps/fUYcY5Wb3c22"
-          },
-          
-          // Home Supplies
-          {
-            category: "🏠 Home Supplies",
-           
-            coords: [52.2184, 6.8901],
-            url: "https://goo.gl/maps/EJY7gBEnuMRCYZaJ7"
-          },
-          {
-            category: "🏠 Home Supplies",
-           
-            coords: [52.2177, 6.8956],
-            url: "https://goo.gl/maps/fZGxiJWmYzMMrpbe6"
-          },
-          
-          // Clothing
-          {
-            category: "👕 Clothing",
-            
-            coords: [52.2173, 6.8962],
-            url: "https://goo.gl/maps/3Nq7yJ96n7U8cQKw5"
-          },
-          {
-            category: "👕 Clothing",
-        
-            coords: [52.2176, 6.8960],
-            url: "https://goo.gl/maps/UR9qkEDDBGVBbsut7"
-          },
-          
-          // Pharmacy
-          {
-            category: "🧼 Pharmacy",
-            
-            coords: [52.2174, 6.8959],
-            url: "https://goo.gl/maps/jCTSMHpHVmzABq7B7"
-          },
-          {
-            category: "🧼 Pharmacy",
-           
-            coords: [52.2204, 6.8927],
-            url: "https://goo.gl/maps/B9a7rs3KEkfttYh86"
-          },
-          
-          // Electronics
-          {
-            category: "💻 Electronics",
-            
-            coords: [52.2342, 6.8638],
-            url: "https://goo.gl/maps/zGhP7n6EFM1pU2Fw6"
-          },
-          
-          // Second-hand
-          {
-            category: "♻️ Second-hand",
-            
-            coords: [52.2183, 6.8968],
-            url: "https://goo.gl/maps/3pTPk4yHhTKwDGUW9"
-          },
-          
-          // Bikes
-          {
-            category: "🚲 Bikes",
-           
-            coords: [52.2434, 6.8379],
-            url: "https://goo.gl/maps/XEXkArXSw5SC3eLC9"
-          },
-          
-          // Barbers
-          {
-            category: "💇 Barbers",
-           
-            coords: [52.2198, 6.8945],
-            url: "https://goo.gl/maps/pgF3quDsoEeKcZ4a8"
-          },
-          
-          // Study Cafés
-          {
-            category: "☕ Study Cafés",
-         
-            coords: [52.2202, 6.8958],
-            url: "https://goo.gl/maps/EkXSwLxBhZKowBuw5"
-          },
-          {
-            category: "☕ Study Cafés",
-          
-            coords: [52.2203, 6.8961],
-            url: "https://goo.gl/maps/7Ld3AUqzZDZzcvth9"
-          },
-          
-          // Prayer Places
-          {
-            category: "🕌 Prayer Places",
-          
-            coords: [52.2225, 6.8899],
-            url: "https://goo.gl/maps/YkyPWBGeKx3Y1Mr78"
-          },
-          
-          // International Restaurants
-          {
-            category: "🍛 Intl. Restaurants",
-            name: 
-            coords: [52.2206, 6.8910],
-            url: "https://goo.gl/maps/wK4z5Mk8ZGyLZgfh9"
-          },
-          {
-            category: "🍛 Intl. Restaurants",
-            
-            coords: [52.2208, 6.8943],
-            url: "https://goo.gl/maps/RrYDj6qgGH8DeTQr9"
-          },
-          
-          // Parks
-          {
-            category: "🌳 Parks",
-        
-            coords: [52.2148, 6.8734],
-            url: "https://goo.gl/maps/H84deEKFqNqkdc5q6"
-          },
-          {
-            category: "🌳 Parks",
-      
-            coords: [52.2286, 6.8994],
-            url: "https://goo.gl/maps/kMpxjUzW2ZhyYhZs8"
-          },
-          
-          // Libraries
-          {
-            category: "📚 Libraries",
-            
-            coords: [52.2201, 6.8965],
-            url: "https://goo.gl/maps/ehokESAiMALzTZc37"
-          },
-          
-          // Gaming Zones
-          {
-            category: "🕹️ Gaming Zones",
-           
-            coords: [52.2190, 6.8952],
-            url: "https://goo.gl/maps/nHaU59pq9rNJ6txo8"
-          }
+          // Example entries
+          { category: "🛒 Groceries", name: "Albert Heijn", coords: [52.2175, 6.8958], url: "https://goo.gl/maps/6pcgJQ8oQbPNkEnK7" },
+          { category: "🛒 Groceries", name: "Jumbo", coords: [52.2205, 6.8926], url: "https://goo.gl/maps/NYB8Q6S7Au8jhkFb9" },
+          { category: "🛒 Groceries", name: "Lidl", coords: [52.2185, 6.8903], url: "https://goo.gl/maps/RMgHtzrXi2gkFGUX6" },
+          { category: "🏠 Home Supplies", name: "Action", coords: [52.2184, 6.8901], url: "https://goo.gl/maps/EJY7gBEnuMRCYZaJ7" },
+          { category: "👕 Clothing", name: "Primark", coords: [52.2173, 6.8962], url: "https://goo.gl/maps/3Nq7yJ96n7U8cQKw5" },
+          { category: "🧼 Pharmacy", name: "Kruidvat", coords: [52.2174, 6.8959], url: "https://goo.gl/maps/jCTSMHpHVmzABq7B7" },
+          { category: "💻 Electronics", name: "MediaMarkt", coords: [52.2342, 6.8638], url: "https://maps.app.goo.gl/AfQzBGEoZaVdb5ps5" },
+          { category: "♻️ Second-hand", name: "Het Goed", coords: [52.21796, 6.89956], url: "https://goo.gl/maps/3pTPk4yHhTKwDGUW9" },
+          { category: "🚲 Bikes", name: "FBF - Fix Your Bike", coords: [52.2434, 6.8379], url: "https://goo.gl/maps/XEXkArXSw5SC3eLC9" },
+          { category: "☕ Study Cafés", name: "Bagels & Beans", coords: [52.2202, 6.8958], url: "https://goo.gl/maps/EkXSwLxBhZKowBuw5" },
+          { category: "🕌 Prayer Places", name: "Ulu Camii Mosque", coords: [52.2225, 6.8899], url: "https://goo.gl/maps/YkyPWBGeKx3Y1Mr78" },
+          { category: "🍛 Intl. Restaurants", name: "India Poort", coords: [52.2206, 6.8910], url: "https://goo.gl/maps/wK4z5Mk8ZGyLZgfh9" },
+          { category: "🌳 Parks", name: "Volkspark", coords: [52.2156, 6.8734], url: "https://goo.gl/maps/H84deEKFqNqkdc5q6" },
+          { category: "📚 Libraries", name: "Bibliotheek Enschede", coords: [52.2201, 6.8965], url: "https://goo.gl/maps/ehokESAiMALzTZc37" },
+          { category: "🕹️ Gaming Zones", name: "Gamestate", coords: [52.2190, 6.8952], url: "https://goo.gl/maps/nHaU59pq9rNJ6txo8" },
         ];
 
         for (const loc of locations) {
-          // Create marker with custom icon
           const marker = L.marker(loc.coords, {
             icon: L.divIcon({
               className: 'custom-marker',
-              html: `<div class="marker-container">
-                      <div class="marker-pin"></div>
-                      <div class="marker-label">${loc.name}</div>
-                    </div>`,
+              html: `<div class="marker-container"><div class="marker-pin"></div></div>`,
               iconSize: [30, 42],
               iconAnchor: [15, 42],
               popupAnchor: [0, -36]
             })
-          })
-          .bindPopup(`<strong>${loc.name}</strong><br><a href="${loc.url}" target="_blank">📍 View on Map</a>`);
-          
+          }).bindPopup(`<strong>${loc.name}</strong><br><a href="${loc.url}" target="_blank">📍 View on Map</a>`);
+
           marker.category = loc.category;
           this.allMarkers.push(marker);
         }
@@ -1211,12 +1056,12 @@
     background: transparent;
     border: none;
   }
-  
+
   .marker-container {
     position: relative;
     text-align: center;
   }
-  
+
   .marker-pin {
     width: 30px;
     height: 30px;
@@ -1228,26 +1073,8 @@
     top: 0;
     margin: -15px 0 0 -15px;
   }
-  
-  .marker-label {
-    position: absolute;
-    left: 50%;
-    top: 100%;
-    transform: translateX(-50%);
-    white-space: nowrap;
-    background: white;
-    padding: 2px 6px;
-    border-radius: 3px;
-    box-shadow: 0 2px 3px rgba(0,0,0,0.2);
-    font-size: 12px;
-    font-weight: bold;
-    margin-top: 5px;
-  }
-  
-  /* Adjust for better visibility */
-  .leaflet-marker-icon .marker-label {
-    z-index: 1000;
-  }
 </style>
+
+
 
 
