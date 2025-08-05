@@ -145,10 +145,70 @@
 </section>
 
 
-  <section id="calendar" class="py-16 bg-white text-center">
-    <h2 class="text-3xl font-bold mb-4">Orbit Calendar 2025</h2>
-    <p class="text-gray-600">[Calendar image or embed goes here]</p>
-  </section>
+  <!--  Calendar -->
+  <div class="max-w-6xl mx-auto">
+    <h3 class="text-xl font-semibold mb-4">Interactive Orbit Events Calendar</h3>
+    <div id='orbit-calendar' class="bg-white p-4 border rounded shadow"></div>
+  </div>
+</section>
+
+<!-- -->
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+
+<!-- Initialization -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const calendarEl = document.getElementById('orbit-calendar');
+
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      height: 600,
+      events: [
+        {
+          title: 'Celebrating Love & Friendship',
+          start: '2025-02-14',
+          description: 'Valentine’s event with notes, dinner, and party.'
+        },
+        {
+          title: 'Spring in Keukenhof',
+          start: '2025-04-19',
+          description: 'Tulip garden trip and nature exploration.'
+        },
+        {
+          title: 'International Food Festival',
+          start: '2025-05-12',
+          description: 'Delicious dishes from 8+ countries.'
+        },
+        {
+          title: 'International Sports Day',
+          start: '2025-05-27',
+          description: 'Soccer, volleyball, and more with students and staff.'
+        },
+        {
+          title: 'Picnic at Wooldrikspark',
+          start: '2025-05-18',
+          description: 'Games, nature, and furry friends at the park.'
+        },
+        {
+          title: 'Teacher of the Year Celebration',
+          start: '2025-07-15',
+          description: 'Congrats to Lucas De Oto for excellence in teaching.'
+        },
+        {
+          title: 'Graduation 2025',
+          start: '2025-07-15',
+          description: 'Cap-tossing and speeches for the new grads.'
+        }
+      ],
+      eventClick: function (info) {
+        alert(info.event.title + "\n\n" + info.event.extendedProps.description);
+      }
+    });
+
+    calendar.render();
+  });
+</script>
 
 
 
@@ -316,6 +376,7 @@
 
 </body>
 </html>
+
 
 
 
